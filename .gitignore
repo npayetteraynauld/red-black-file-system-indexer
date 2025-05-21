@@ -1,3 +1,9 @@
 venv/
 rb_tree/__pycache__/
 tests/__pycache__/
+indexer/__pycache__/
+jupyter_tests/
+cli/__pycache__/
+utils/__pycache__/
+EX_DIRECTORY/
+data/index.pk1

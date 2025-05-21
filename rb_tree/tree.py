@@ -1,11 +1,12 @@
 from .node import RBNode
-from dataclasses import dataclass
+from typing import Optional
+from utils.sort_keys import by_path
 
-@dataclass
 class RBTree:
 
-    def __init__(self):
-        self.nil = RBNode(None)
+    def __init__(self, key_func=by_path):
+        self.key_func = key_func
+        self.nil = RBNode()
         self.nil.red = False
         self.nil.left = None
         self.nil.right = None
@@ -114,10 +115,10 @@ class RBTree:
         #this while loop looks for a nil node to replace with our new_node
         while current != self.nil:
             parent = current
-            if new_node.val < current.val:
+            if self.key_func(new_node.val) < self.key_func(current.val):
                 current = current.left
 
-            elif new_node.val > current.val:
+            elif self.key_func(new_node.val) > self.key_func(current.val):
                 current = current.right
 
             # else return since the value is a duplicate
@@ -132,28 +133,63 @@ class RBTree:
             self.root = new_node
 
         #compare new_node to parent to figure out if it is  right or left child
-        elif parent.val > new_node.val:
+        elif self.key_func(parent.val) > self.key_func(new_node.val):
             parent.left = new_node
 
-        elif parent.val < new_node.val:
+        elif self.key_func(parent.val) < self.key_func(new_node.val):
             parent.right = new_node
 
         self.fix_insert(new_node)
 
-    def search(self, val):
+    def search_by(self, val, field_name: Optional[str] = "path", contains: bool = False):
         current = self.root
-        
-        #search tree for value
-        while current != self.nil:
-            if val < current.val:
-                current = current.left
-            elif val > current.val:
-                current = current.right
-            #if both of the statements above aren't true, it means that we found our node
-            else:
-                return current
 
-        #if nothing was returned in the while loop, it means val doesn't exist in tree
-        return None
+        if not hasattr(current.val, field_name):
+            raise AttributeError(f"{field_name} is not a valid field")
+
+        #fuzzy search O(n)
+        if contains:
+            matches = []
+            
+            def inorder(node):
+                if node == self.nil:
+                    return
+                
+                if val in str(getattr(node.val, field_name)):
+                    matches.append(node)
+                inorder(node.left)
+                inorder(node.right)
+
+            inorder(current)
+            return matches if matches else None
+
+        #search tree for exact value O(log n)
+        else:
+            while current != self.nil:
+                node_val = getattr(current.val, field_name)
+
+                if val < node_val:
+                    current = current.left
+                elif val > node_val:
+                    current = current.right
+                #if both of the statements above aren't true, it means that we found our node
+                else:
+                    return [current]
 
 
+def print_rbtree(node, indent="", last=True):
+    if node is not None:
+        # Choose symbol based on whether this is a right or left child
+        prefix = "└── " if last else "├── "
+        # Print node with color indicator
+        color = "R" if node.red == True else "B"
+        if node.val is not None:
+            print(indent + prefix + f"[{color}] {node.val.path}")
+
+        # Recurse on children
+        indent += "    " if last else "│   "
+        children = [child for child in [node.left, node.right] if child is not None]
+        for i, child in enumerate(children):
+            print_rbtree(child, indent, i == len(children) - 1)
+    else:
+        print(indent + ("└── " if last else "├── ") + "[ ]")  # Empty leaf placeholder
