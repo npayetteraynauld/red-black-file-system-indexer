@@ -6,47 +6,48 @@ from rb_tree.tree import RBTree, print_rbtree
 from indexer.scanner import scan_directory
 from pathlib import Path
 from indexer.metadata import format_size, format_mtime
+from rich import print
 
 
 
 
-def main_test():
+def main():
     args = parse_args()
 
     if args.command == "scan":
         print(f"Scanning: {args.path}")
 
         #build the tree by path
-        tree_by_path = RBTree()
-        scan_directory(args.path, tree_by_path)
+        tree_by_file = RBTree()
+        scan_directory(args.path, tree_by_file)
+
+        print("[green]Scan complete![/green]")
 
         #serialize the trees (default is data/index.pk1)
-        save_trees(tree_by_path)
-        print_rbtree(tree_by_path.root)
+        save_trees(tree_by_file)
 
     elif args.command == "search":
         #load the trees (default is data/index.pk1)
-        tree_by_path, = load_trees()
+        tree_by_file, = load_trees()
         
-        results = tree_by_path.search_by(args.query, args.by, contains=args.contains)
+        if args.by == "size":
+            min_size = args.min_size if args.min_size is not None else 0
+            max_size = args.max_size if args.max_size is not None else float("inf")
+            results = tree_by_file.range_search_by(min_size, max_size, unit=args.unit)
+
+
+        elif args.query:
+           results = tree_by_file.search_by(args.query, args.by, contains=args.contains)
+
+        else:
+            print("❌ Either provide a --query or a valid size range with --min-size/--max-size")
+            return
+
 
         print_search_results(results)
         
-        if False:
-            print(f"\n🔍 Searching for '{args.query}' by {args.by}")
-            if results:
-                print(f"✅ {len(results)} Results Found:\n")
-                for i, node in enumerate(results, 1):
-                    val = node.val
-                    print(f"{i}. Path     : {val.path}")
-                    print(f"   Size     : {format_size(val.size)}")
-                    print(f"   Modified : {format_mtime(val.modified)}")
-                    print(f"   Type     : {val.type}\n")
-            else:
-                print("❌ No results found.")
-
 
 
 if __name__=="__main__":
-    main_test()
+    main()
 

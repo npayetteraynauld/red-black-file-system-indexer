@@ -1,10 +1,10 @@
 from .node import RBNode
 from typing import Optional
-from utils.sort_keys import by_path
+from utils.sort_keys import by_file
 
 class RBTree:
 
-    def __init__(self, key_func=by_path):
+    def __init__(self, key_func=by_file):
         self.key_func = key_func
         self.nil = RBNode()
         self.nil.red = False
@@ -141,7 +141,7 @@ class RBTree:
 
         self.fix_insert(new_node)
 
-    def search_by(self, val, field_name: Optional[str] = "path", contains: bool = False):
+    def search_by(self, val, field_name: Optional[str] = "path", contains: bool = False,):
         current = self.root
 
         if not hasattr(current.val, field_name):
@@ -176,6 +176,33 @@ class RBTree:
                 else:
                     return [current]
 
+    def range_search_by(self, min_val=0, max_val=float("inf"), field_name="size", unit="KB"):
+        unit_multipliers = {
+            "B": 1,
+            "KB": 1024,
+            "MB": 1024 ** 2,
+            "GB": 1024 ** 3
+        }
+
+        multiplier = unit_multipliers[unit]
+        min_val *= multiplier
+        max_val *= multiplier
+
+        matches = []
+        def inorder(node):
+            if node == self.nil:
+                return
+
+            inorder(node.left)
+
+            val = node.val.size
+            if min_val <= val <= max_val:
+                matches.append(node)
+
+            inorder(node.right)
+
+        inorder(self.root)
+        return matches if matches else None
 
 def print_rbtree(node, indent="", last=True):
     if node is not None:

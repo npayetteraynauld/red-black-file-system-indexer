@@ -13,13 +13,15 @@ def scan_directory(path: Path, tree: RBTree):
             __, ext = os.path.splitext(full_path)
 
             file_info = {
+                "file": file,
                 "path": full_path,
                 "size": stat.st_size,
                 "mtime": stat.st_mtime,
                 "type": ext.lstrip(".")
             }
 
-            meta = FileMeta(file_info["path"],
+            meta = FileMeta(file_info["file"],
+                            file_info["path"],
                             file_info["size"],
                             file_info["mtime"],
                             file_info["type"]

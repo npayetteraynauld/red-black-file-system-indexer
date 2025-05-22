@@ -24,14 +24,13 @@ def parse_args():
     
     search_parser.add_argument(
         "--query",
-        required = True,
-        help = "what to search for"
+        help = "what to search for (only needed for non_range queries)"
     )
 
     search_parser.add_argument(
         "--by",
-        default = "path",
-        help = "Field to search by: path(default), size, modified"
+        default = "file",
+        help = "Field to search by: file(default), path, size"
     )
 
     search_parser.add_argument(
@@ -40,4 +39,22 @@ def parse_args():
         help = "Enable partial string matching(slower)"
     )
 
+    search_parser.add_argument(
+        "--min-size",
+        type = int,
+        help = "Minimum file size"
+    )
+
+    search_parser.add_argument(
+            "--max-size",
+            type = int,
+            help = "Maximum file size"
+    )
+
+    search_parser.add_argument(
+        "--unit",
+        choices = ["B", "KB", "MB", "GB"],
+        default = "KB",
+        help = "Unit for size (default: KB)"
+    )
     return parser.parse_args()
