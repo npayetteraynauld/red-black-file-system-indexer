@@ -10,8 +10,8 @@ class RBNode:
         self.right = None
 
     def __str__(self):
-        return self.val.file
+        return self.val.path
 
     def __repr__(self):
-        return f"file: {self.val.file}, path: {self.val.path} size: {self.val.size}, modified: {self.val.modified}, type: {self.val.type}"
+        return f"file: {self.val.path} size: {self.val.size}, modified: {self.val.modified}, type: {self.val.type}"
         

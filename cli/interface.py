@@ -29,8 +29,9 @@ def parse_args():
 
     search_parser.add_argument(
         "--by",
-        default = "file",
-        help = "Field to search by: file(default), path, size"
+        choices= ["path(default)", "size"],
+        default = "path",
+        help = "Field to search by: path(default: O(log n)), size"
     )
 
     search_parser.add_argument(
@@ -53,7 +54,7 @@ def parse_args():
 
     search_parser.add_argument(
         "--unit",
-        choices = ["B", "KB", "MB", "GB"],
+        choices = ["B", "KB(default)", "MB", "GB"],
         default = "KB",
         help = "Unit for size (default: KB)"
     )

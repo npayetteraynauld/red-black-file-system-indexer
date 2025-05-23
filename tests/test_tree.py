@@ -61,3 +61,19 @@ def test_no_red_red_violation():
 
     check_no_red_red(tree.root)
 
+def print_rbtree(node, indent="", last=True):
+    if node is not None:
+        # Choose symbol based on whether this is a right or left child
+        prefix = "└── " if last else "├── "
+        # Print node with color indicator
+        color = "R" if node.red == True else "B"
+        if node.val is not None:
+            print(indent + prefix + f"[{color}] {node.val.path}")
+
+        # Recurse on children
+        indent += "    " if last else "│   "
+        children = [child for child in [node.left, node.right] if child is not None]
+        for i, child in enumerate(children):
+            print_rbtree(child, indent, i == len(children) - 1)
+    else:
+        print(indent + ("└── " if last else "├── ") + "[ ]")  # Empty leaf placeholder
