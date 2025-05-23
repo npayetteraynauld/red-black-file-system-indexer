@@ -55,7 +55,11 @@ I also got to practice my python knowledge.
 
 ## Project Structure
 
-<pre> ``` rbfs_indexer/ ├── tree/ # Red-Black Tree implementation ├── indexer/ # Logic for traversing filesystem and inserting into the tree ├── cli/ # Command-line interface └── utils/ # Helper functions ``` </pre>
+<pre> ``` rbfs_indexer/ 
+  ├── tree/ # Red-Black Tree implementation 
+  ├── indexer/ # Logic for traversing filesystem and inserting into the tree 
+  ├── cli/ # Command-line interface 
+  └── utils/ # Helper functions ``` </pre>
 
 ## Plans for Future
 
